@@ -6,9 +6,10 @@ pipeline {
     }
 
     stages {
-        stage('Hello') {
+        stage('Check NodeJS Version') {
             steps {
-                echo 'Hello From SCM'
+                node -v
+                npm -v
             }
         }
     }
