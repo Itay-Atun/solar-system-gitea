@@ -5,6 +5,10 @@ pipeline {
       nodejs 'nodejs-22-6-0'
     }
 
+    environment {
+        MONGO_URI = "URI_Link"
+    }
+
     stages {
         stage('Install Dependencies') {
             steps {
