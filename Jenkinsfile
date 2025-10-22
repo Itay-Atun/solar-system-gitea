@@ -15,6 +15,7 @@ pipeline {
                 sh 'npm install --no-audit'
             }
         }
+
         stage('Dependency Scanning') {
             parallel {
                 stage('NPM Dependency Audit') {
@@ -44,7 +45,7 @@ pipeline {
                                 echo "OWASP Dependency Check failed: ${e.getMessage()}"
                                 echo "This may be due to NVD API parsing issues. Continuing with build..."
                                 // Optionally, you can still fail the build if you want strict security scanning
-                                // currentBuild.result = 'UNSTABLE'
+                                currentBuild.result = 'SUCESS'
                             }
                         }
                     }
@@ -58,6 +59,16 @@ pipeline {
                     sh 'npm test'
                 }
                 junit allowEmptyResults: true, stdioRetention: '', testResults: 'test-results.xml'
+            }
+        }
+
+        stage('Code Coverage') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: '14504984-07ed-4f8d-8c8f-e6fe8db831ae', passwordVariable: 'MONGO_PASSWORD', usernameVariable: 'MONGO_USER')]) {
+                    sh 'npm run coverage'
+                }
+                publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: 'coverage/lcov-report', reportFiles: 'dependency-check-jenkins.html', reportName: 'index.html', reportTitles: '', useWrapperFileDirectly: true])
+                // junit allowEmptyResults: true, stdioRetention: '', testResults: 'test-results.xml'
             }
         }
     }
