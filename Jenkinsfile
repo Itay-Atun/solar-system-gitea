@@ -50,7 +50,10 @@ pipeline {
 
         stage('Unit Testing') {
             steps {
-                sh 'npm test'
+                withCredentials([usernamePassword(credentialsId: '14504984-07ed-4f8d-8c8f-e6fe8db831ae', passwordVariable: 'MONGO_PASSWORD', usernameVariable: 'MONGO_USER')]) {
+                    sh 'npm test'
+                }
+                junit allowEmptyResults: true, stdioRetention: '', testResults: 'test-results.xml'
             }
         }
     }
